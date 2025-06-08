@@ -79,6 +79,24 @@
       margin: 0;
       font-size: 0.95em;
     }
+    .badge {
+      display: inline-block;
+      margin-right: 5px;
+      padding: 13px 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .delete-btn {
+      margin-left: 10px;
+      color: red;
+      cursor: pointer;
+      position: absolute;
+      right: 3px;
+      top: 0px;
+    }
   </style>
 </head>
 <body>
@@ -108,35 +126,36 @@
   </select>
 
   <p id="warningMessage" style="color:orange; font-size:0.9em; display:none;"></p>
+  <div id="searchHistory" style="margin-bottom: 1em;padding-right:8px;"></div>
 
   <button onclick="lookupFlight()">Check Status</button>
 
-  <h1 style="text-align: center; font-size: 0.8em; font-weight: normal; font-style: italic; color: gray; margin-top: 1.5em;">
-    Note: Alaska updates flight status pages approximately 6 minutes after the top of each hour.
-  </h1>
-
   <script>
     window.addEventListener("DOMContentLoaded", () => {
+      initializeFlightInput();
+      initializeOffsetSelect();
+      displaySearchHistory();
+    });
+  
+    function initializeFlightInput() {
       const savedFlight = localStorage.getItem('savedFlight');
       const flightInput = document.getElementById('flight');
       const rememberBox = document.getElementById('remember');
       const offsetSelect = document.getElementById('offset');
-      const warningMessage = document.getElementById('warningMessage');
 
       if (savedFlight) {
         flightInput.value = savedFlight;
         rememberBox.checked = true;
       }
-
+  
       rememberBox.addEventListener('change', () => {
         if (!rememberBox.checked) {
           localStorage.removeItem('savedFlight');
           flightInput.value = '';
         }
       });
-
-      // Define the warning message function
-      function updateWarningMessage() {
+        // Define the warning message function
+        function updateWarningMessage() {
         const offset = parseInt(offsetSelect.value);
         if (offset === 4) {
           const now = new Date();
@@ -171,38 +190,108 @@
 
       // Run it initially in case 4 is already selected
       updateWarningMessage();
-    });
-
-    function lookupFlight() {
-      const flightInput = document.getElementById("flight");
-      const flight = flightInput.value.trim();
-      const offset = parseInt(document.getElementById("offset").value);
-      const remember = document.getElementById("remember").checked;
-
-      if (!/^\d+$/.test(flight)) {
-        alert("Please enter a valid numeric flight number.");
-        return;
-      }
-
-      if (remember) {
-        localStorage.setItem('savedFlight', flight);
-      } else {
-        localStorage.removeItem('savedFlight');
-      }
-
-      const date = new Date();
-      date.setDate(date.getDate() + offset);
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const formattedDate = `${year}-${month}-${day}`;
-
-      const url = `https://www.alaskaair.com/status/${flight}/${formattedDate}`;
-      window.location.href = url;
     }
-  </script>
-
+  
+    function initializeOffsetSelect() {
+      const offsetSelect = document.getElementById('offset');
+      const warningMessage = document.getElementById('warningMessage');
+  
+      offsetSelect.addEventListener('change', () => {
+        const offset = parseInt(offsetSelect.value);
+        warningMessage.style.display = offset === 4 ? 'block' : 'none';
+        if (offset === 4) {
+          warningMessage.textContent = "Note: Alaska’s flight status pages may not be available for flights more than 4 days ahead or scheduled later in the day.";
+        }
+      });
+    }
+        function displaySearchHistory() {
+          const searchHistoryDiv = document.getElementById('searchHistory');
+          const searches = JSON.parse(localStorage.getItem('searches') || '[]');
+  
+          searches.forEach(search => {
+            const [flight, offset] = search.split('|');
+            const badge = createSearchBadge(flight, offset, searches);
+            searchHistoryDiv.appendChild(badge);
+          });
+        }
+  
+        function createSearchBadge(flight, offset, searches) {
+          const badge = document.createElement('span');
+          const offsetText = offset == 0 ? 'today' : (offset > 0 ? `+${offset} days` : `${offset} days`);
+          badge.textContent = `AS ${flight}, ${offsetText}`;
+          badge.classList.add('badge');
+  
+          const deleteBtn = createDeleteButton(flight, offset, searches, badge);
+          badge.appendChild(deleteBtn);
+  
+          badge.addEventListener('click', () => {
+            navigateToFlightStatus(flight, offset);
+          });
+  
+          return badge;
+        }
+  
+        function createDeleteButton(flight, offset, searches, badge) {
+          const deleteBtn = document.createElement('span');
+          deleteBtn.textContent = 'x';
+          deleteBtn.classList.add('delete-btn');
+  
+          deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const updatedSearches = searches.filter(s => s !== `${flight}|${offset}`);
+            localStorage.setItem('searches', JSON.stringify(updatedSearches));
+            badge.remove();
+          });
+  
+          return deleteBtn;
+        }
+  
+        function navigateToFlightStatus(flight, offset) {
+          const date = new Date();
+          date.setDate(date.getDate() + parseInt(offset));
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const formattedDate = `${year}-${month}-${day}`;
+          const url = `https://www.alaskaair.com/status/${flight}/${formattedDate}`;
+          window.location.href = url;
+        }
+  
+        function lookupFlight() {
+          const flightInput = document.getElementById("flight");
+          const flight = flightInput.value.trim();
+          const offset = parseInt(document.getElementById("offset").value);
+          const remember = document.getElementById("remember").checked;
+  
+          if (!/^\d+$/.test(flight) || !( (flight >= 0 && flight <= 3500) || (flight >= 9000 && flight <= 9999) )) {
+            alert("Please enter a valid flight number (0-3500 or 9000-9999).");
+            return;
+          }
+  
+          if (remember) {
+            localStorage.setItem('savedFlight', flight);
+          } else {
+            localStorage.removeItem('savedFlight');
+          }
+  
+          const searchTerm = `${flight}|${offset}`;
+          let existingSearches = JSON.parse(localStorage.getItem('searches') || '[]');
+  
+          // Ensure the search term is unique
+          if (!existingSearches.includes(searchTerm)) {
+            existingSearches.push(searchTerm);
+  
+            // Keep only the last 5 searches
+            if (existingSearches.length > 5) {
+              existingSearches.shift(); // Remove the oldest search
+            }
+  
+            localStorage.setItem('searches', JSON.stringify(existingSearches));
+          }
+  
+          navigateToFlightStatus(flight, offset);
+        }
+      </script>
   <div style="text-align:center; font-size:0.85em; color:gray; margin-top:1em;">
     <p>
       This tool is unofficial and not affiliated with Alaska Airlines. Always confirm flight details at
