@@ -364,52 +364,36 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function initializeFlightInput() {
-const savedFlight = localStorage.getItem('savedFlight');
-const flightInput = document.getElementById('flight');
-const rememberBox = document.getElementById('remember');
-const offsetSelect = document.getElementById('offset');
-const warningMessage = document.getElementById('warningMessage');
-
-  flightInput.addEventListener('input', () => {
-    if (rememberBox.checked) {
-      localStorage.setItem('savedFlight', flightInput.value.trim());
-    }
-  });
-
-  rememberBox.addEventListener('change', () => {
-    if (rememberBox.checked) {
-      localStorage.setItem('savedFlight', flightInput.value.trim());
-    } else {
-      localStorage.removeItem('savedFlight');
-      flightInput.value = ''; // clear the text field
-    }
-  })
-}
-
-function forceToday() {
-  // ⬇️ Uncomment this line to force a specific test date (e.g. June 17, 2025)
-  // const overrideDate = '2025-06-25';
-
-  // ⬇️ Leave this line as-is for production
-  const overrideDate = null;
-
-  const testDate = overrideDate ? new Date(overrideDate) : new Date();
-  testDate.setHours(0, 0, 0, 0);
-  return testDate;
-}
-
-function initializeFlightInput() {
   const savedFlight = localStorage.getItem('savedFlight');
   const flightInput = document.getElementById('flight');
   const rememberBox = document.getElementById('remember');
   const offsetSelect = document.getElementById('offset');
   const warningMessage = document.getElementById('warningMessage');
 
+  // Set initial input state
   if (savedFlight) {
     flightInput.value = savedFlight;
     rememberBox.checked = true;
   }
 
+  // Save flight number as user types (if "remember" is checked)
+  flightInput.addEventListener('input', () => {
+    if (rememberBox.checked) {
+      localStorage.setItem('savedFlight', flightInput.value.trim());
+    }
+  });
+
+  // Save or clear savedFlight based on checkbox state
+  rememberBox.addEventListener('change', () => {
+    if (rememberBox.checked) {
+      localStorage.setItem('savedFlight', flightInput.value.trim());
+    } else {
+      localStorage.removeItem('savedFlight');
+      flightInput.value = ''; // clear the input
+    }
+  });
+
+  // Handle date offset warning
   offsetSelect.addEventListener('change', updateWarningMessage);
   updateWarningMessage();
 
@@ -433,6 +417,13 @@ function initializeFlightInput() {
   }
 }
 
+function forceToday() {
+  const overrideDate = null; // Change this to a string like '2025-06-25' for testing
+  const testDate = overrideDate ? new Date(overrideDate) : new Date();
+  testDate.setHours(0, 0, 0, 0);
+  return testDate;
+}
+
 function displaySearchHistory() {
   const searchHistoryDiv = document.getElementById('searchHistory');
   searchHistoryDiv.innerHTML = '';
@@ -440,7 +431,7 @@ function displaySearchHistory() {
   const today = forceToday();
 
   const validSearches = allSearches.filter(entry => {
-    const [_, dateString] = entry.split('|');
+    const [, dateString] = entry.split('|');
     const [year, month, day] = dateString.split('-').map(Number);
     const entryDate = new Date(year, month - 1, day);
     entryDate.setHours(0, 0, 0, 0);
@@ -591,7 +582,7 @@ function createDeleteButton(flight, dateString, searches, badge) {
       searches.splice(index, 1);
       localStorage.setItem('searches', JSON.stringify(searches));
       displaySearchHistory();
-      removeFromFavorites(flight); // if present
+      removeFromFavorites(flight); // also removes from favorites if needed
     }
   });
 
@@ -627,7 +618,6 @@ function lookupFlight() {
   const dd = String(targetDate.getDate()).padStart(2, '0');
   const dateString = `${yyyy}-${mm}-${dd}`;
 
-  // Keep this as well in case user clicks button
   if (rememberBox.checked) {
     localStorage.setItem('savedFlight', flightNumber);
   } else {
@@ -648,6 +638,7 @@ function lookupFlight() {
   navigateToFlightStatus(flightNumber, dateString);
 }
 </script>
+
 
 
   <div style="text-align:center; font-size:0.85em; color:gray; margin-top:1em;">
