@@ -57,6 +57,27 @@
     h2 {
       text-align: center;
     }
+    
+    .description-container {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.toggle-button {
+  font-size: 0.8em;
+  font-weight: normal;
+  color: gray;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.description-text {
+  display: none;
+  font-size: 0.8em;
+  color: gray;
+  margin-top: 0.5em;
+}
 
     body {
       font-family: sans-serif;
@@ -320,9 +341,15 @@
 </head>
 <body>
   <h2>Alaska Flight Status Finder</h2>
-  <p style="font-size: 0.8em; font-weight: normal; text-align: center; color: gray; margin-top: -0.5em; margin-bottom: 1em;">
-    Description: Alaska Airlines creates unique flight status pages for every flight. They are created 4 days in advance and live for 2–3 days after the flight. Enter the flight number and choose Today, Tomorrow, etc., then click Check Status to open that specific flight status page.
-  </p>
+<div class="description-container">
+  <button onclick="toggleDescription(this)" class="toggle-button">
+    ▼ Show Description
+  </button>
+  <div id="descriptionText" class="description-text">
+    Alaska Airlines creates unique flight status pages for every flight. They are created 4 days in advance and live for 2–3 days after the flight.
+    Enter the flight number and choose Today, Tomorrow, etc., then click Check Status to open that specific flight status page.
+  </div>
+</div>
 
   <label for="flight">Flight Number:</label>
   <input type="text" id="flight" inputmode="numeric" placeholder="e.g., 331" required autofocus />
@@ -359,6 +386,13 @@
   <button onclick="lookupFlight()">Check Status"</button>
 
 <script>
+  function toggleDescription(button) {
+    const content = document.getElementById('descriptionText');
+    const isHidden = content.style.display === 'none';
+    content.style.display = isHidden ? 'block' : 'none';
+    button.innerHTML = isHidden ? '▲ Hide Description' : '▼ Show Description';
+  }
+
 window.addEventListener("DOMContentLoaded", () => {
   initializeFlightInput();
   displaySearchHistory();
