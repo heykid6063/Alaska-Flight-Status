@@ -369,10 +369,10 @@
 <body>
   <h2>Alaska Flight Status Finder</h2>
 <div class="description-container">
-  <button onclick="toggleDescription(this)" class="toggle-button">
+  <button id="toggleDescription" class="toggle-button" aria-expanded="false">
     ▼ Show Description
   </button>
-  <div id="descriptionText" class="description-text">
+  <div id="descriptionBox" class="description-text">
     Alaska Airlines creates unique flight status pages for every flight. They are created 4 days in advance and live for 2–3 days after the flight.
     Enter the flight number and choose Today, Tomorrow, etc., then click Check Status to open that specific flight status page.
   </div>
@@ -413,13 +413,17 @@
   <button onclick="lookupFlight()">Check Status</button>
 
 <script>
-  const toggleBtn = document.getElementById("toggleDescription");
-  const descBox = document.getElementById("descriptionBox");
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("toggleDescription");
+    const descBox = document.getElementById("descriptionBox");
 
-  toggleBtn.addEventListener("click", () => {
-    const isExpanded = descBox.classList.toggle("expanded");
-    toggleBtn.textContent = isExpanded ? "Hide Description ▲" : "Show Description ▼";
-    toggleBtn.setAttribute("aria-expanded", isExpanded);
+    toggleBtn.addEventListener("click", function () {
+      descBox.classList.toggle("expanded");
+
+      const isExpanded = descBox.classList.contains("expanded");
+      toggleBtn.innerHTML = isExpanded ? "▲ Hide Description" : "▼ Show Description";
+      toggleBtn.setAttribute("aria-expanded", isExpanded);
+    });
   });
 
 window.addEventListener("DOMContentLoaded", () => {
