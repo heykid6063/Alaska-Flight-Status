@@ -394,15 +394,12 @@
     Enter the flight number and choose Today, Tomorrow, etc., then click Check Status to open that specific flight status page.
   </div>
 </div>
-
   <label for="flight">Flight Number:</label>
   <input type="text" id="flight" inputmode="numeric" placeholder="e.g., 331" required autofocus />
-
   <div class="checkbox-wrapper">
     <input type="checkbox" id="remember" />
     <label for="remember">Remember this flight number</label>
   </div>
-
   <label for="offset">Date:</label>
   <select id="offset">
     <option value="-3">3 Days ago</option>
@@ -421,12 +418,10 @@
     <h3 style="text-align:center; user-select:none;">Favorites</h3>
     <div id="favoritesList"></div>
   </div>
-
   <div id="searchHistorySection" style="margin-bottom: 1em;">
     <h3 style="text-align:center; user-select:none;">Recent Searches</h3>
     <div id="searchHistory"></div>
   </div>
-
   <button onclick="lookupFlight()">Check Status</button>
 
 <script>
@@ -724,9 +719,6 @@ function lookupFlight() {
   navigateToFlightStatus(flightNumber, dateString);
 }
 </script>
-
-
-
   <div style="text-align:center; font-size:0.85em; color:gray; margin-top:1em;">
     <p>
       This tool is unofficial and not affiliated with Alaska Airlines. Always confirm flight details at
@@ -739,15 +731,12 @@ function lookupFlight() {
       </a>.
     </p>
   </div>
-  
   <footer style="margin-top: 4rem; text-align: center; font-size: 0.85rem; color: var(--muted-text, #666); opacity: 0.7;">
   <p>
-    Crafted with curiosity, coffee, and the assistance of <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline dotted;">ChatGPT</a>.
+    Crafted with curiosity, coffee, the GitHub Community, and the assistance of <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline dotted;">ChatGPT</a>.
   </p>
 </footer>
-
   <p id="lastUpdated"></p>
-
   <script>
     const lastModified = new Date(document.lastModified);
     const options = {
