@@ -61,7 +61,7 @@
     
     .description-container {
   text-align: center;
-  margin: 8px 0; /* Reduced vertical spacing */
+  margin: 0 0; /* Reduced vertical spacing */
   padding: 0;    /* Remove inner space if any */
   /*margin-bottom: 1em;*/
 }
@@ -82,11 +82,22 @@
 .description-text {
   font-size: 0.8em;
   color: gray;
-  margin-top: 4px;        /* Minimal spacing above description text */
-  padding: 4px 6px;       /* Minimal padding inside description box */
+  /*margin-top: 4px;*/        /* Minimal spacing above description text */
+  /*padding: 4px 6px;*/       /* Minimal padding inside description box */
   font-size: 0.85rem;     /* Optional: smaller text */
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  margin: 0;
+  padding: 0;
   /*margin-top: 0.5em;*/
 }
+
+.description-text.show {
+  max-height: 500px; /* or a large enough value to fit the text */
+  margin-top: 4px;
+  padding-top: 4px;
+  }
 
   #descriptionBox {
     transition: max-height 0.3s ease, opacity 0.3s ease;
