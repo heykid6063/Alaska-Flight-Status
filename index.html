@@ -63,6 +63,8 @@
   /*margin-bottom: 1em;*/
 }
 
+
+
 .toggle-button {
   font-size: 0.8em;
   font-weight: normal;
@@ -78,6 +80,31 @@
   color: gray;
   /*margin-top: 0.5em;*/
 }
+
+  #descriptionBox {
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+  }
+
+  #descriptionBox.expanded {
+    max-height: 300px; /* big enough to show full content */
+    opacity: 1;
+  }
+
+  #toggleDescription {
+    font-size: 0.9em;
+    background: none;
+    border: none;
+    color: #0077cc;
+    cursor: pointer;
+    margin-bottom: 0.5em;
+  }
+
+  #toggleDescription:focus {
+    outline: 2px solid #0077cc;
+  }
 
     body {
       font-family: sans-serif;
@@ -386,12 +413,14 @@
   <button onclick="lookupFlight()">Check Status</button>
 
 <script>
-  function toggleDescription(button) {
-    const content = document.getElementById('descriptionText');
-    const isHidden = content.style.display === 'none';
-    content.style.display = isHidden ? 'block' : 'none';
-    button.innerHTML = isHidden ? '▲ Hide Description' : '▼ Show Description';
-  }
+  const toggleBtn = document.getElementById("toggleDescription");
+  const descBox = document.getElementById("descriptionBox");
+
+  toggleBtn.addEventListener("click", () => {
+    const isExpanded = descBox.classList.toggle("expanded");
+    toggleBtn.textContent = isExpanded ? "Hide Description ▲" : "Show Description ▼";
+    toggleBtn.setAttribute("aria-expanded", isExpanded);
+  });
 
 window.addEventListener("DOMContentLoaded", () => {
   initializeFlightInput();
