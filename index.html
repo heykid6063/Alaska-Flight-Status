@@ -402,8 +402,20 @@
     footer a:hover,
     div a:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 12px rgba(230, 194, 0, 0.5);
+      box-shadow: 0 0 12px var(--footer-glow);
     }
+
+    /* Define hover glow per theme */
+    :root {
+      --footer-glow: rgba(230, 194, 0, 0.5); /* gold for light mode */
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+      --footer-glow: rgba(255, 215, 0, 0.6); /* brighter gold for dark mode */
+    }
+    }
+
 
   </style>
 </head>
