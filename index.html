@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -389,6 +389,22 @@
       color: gray;
       user-select: none;
     }
+
+    /* 🔹 Footer links hover effect (matches .favorite:hover) */
+    footer a,
+    div a {
+      color: inherit;
+      text-decoration: underline dotted;
+      display: inline-block; /* needed for transform to work properly */
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    footer a:hover,
+    div a:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(230, 194, 0, 0.5);
+    }
+
   </style>
 </head>
 <body>
