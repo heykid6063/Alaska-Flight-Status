@@ -486,6 +486,8 @@ function initializeFlightInput() {
   const rememberBox = document.getElementById('remember');
   const offsetSelect = document.getElementById('offset');
   const warningMessage = document.getElementById('warningMessage');
+  
+  updateDateOptionLabels(offsetSelect)
 
   // Set initial input state
   if (savedFlight) {
@@ -532,6 +534,15 @@ function initializeFlightInput() {
       warningMessage.textContent = '';
     }
   }
+}
+
+function updateDateOptionLabels(offsetSelect) f
+const today - forceToday();
+const dateOptions - { month: "short*, day: "numeric' 3;
+Array.from(offsetSelect.options) .forEach(option →> {
+const offset - parseInt(option.value, 18); const optionDate - new Date(today); optionDate.setDate(today.getDate() + offset);
+option. textContent - optionDate. toLocaleDateString('en-US', dateOptions);
+});
 }
 
 function forceToday() {
