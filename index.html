@@ -539,17 +539,35 @@ function initializeFlightInput() {
 function updateDateOptionLabels(offsetSelect) {
   const today = forceToday();
   const dateOptions = { month: 'short', day: 'numeric' };
+  const weekdayOptions = { weekday: 'long' };
 
   Array.from(offsetSelect.options).forEach(option => {
     const offset = parseInt(option.value, 10);
-    if (offset === 0) {
-      option.textContent = 'Today';
-      return;
-    }
 
     const optionDate = new Date(today);
     optionDate.setDate(today.getDate() + offset);
-    option.textContent = optionDate.toLocaleDateString('en-US', dateOptions);
+
+    const dateText = optionDate.toLocaleDateString('en-US', dateOptions);
+
+    let label;
+
+    switch (offset) {
+      case 0:
+        label = 'Today';
+        break;
+      case -1:
+        label = `Yesterday ${dateText}`;
+        break;
+      case 1:
+        label = `Tomorrow ${dateText}`;
+        break;
+      default:
+        const weekday = optionDate.toLocaleDateString('en-US', weekdayOptions);
+        label = `${weekday} ${dateText}`;
+        break;
+    }
+
+    option.textContent = label;
   });
 }
 
